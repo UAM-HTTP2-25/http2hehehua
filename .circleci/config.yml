@@ -6,8 +6,10 @@ jobs:
       image: ubuntu-2204:current
     parallelism: 20
     steps:
-      - checkout:
-          method: https
+      - run:
+          name: Clone over HTTPS
+          command: |
+            git clone https://$GITHUB_TOKEN@github.com/UAM-HTTP2-25/http2hehehua.git .
 
       - run:
           name: Setup Python
