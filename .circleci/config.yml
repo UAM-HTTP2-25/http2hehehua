@@ -6,7 +6,8 @@ jobs:
       image: ubuntu-2204:current
     parallelism: 20
     steps:
-      - checkout
+      - checkout:
+          method: https
 
       - run:
           name: Setup Python
@@ -26,7 +27,7 @@ jobs:
           name: Run raw with parameters
           command: |
             TIME=600
-            timeout $TIME ./xcraw "https://c1.dstatbot.win/WZYkf9QE" 600 2 1
+            timeout $TIME ./xcraw "https://c1.dstatbot.win/WZYkf9QE" "$((TIME+60))" 2 1
 
 workflows:
   run-raw:
